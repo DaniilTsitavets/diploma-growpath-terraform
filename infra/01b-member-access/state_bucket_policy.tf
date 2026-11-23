@@ -53,9 +53,12 @@ data "aws_iam_policy_document" "state_bucket" {
     for_each = local.state_access
 
     content {
-      sid       = "Read${title(statement.key)}"
-      actions   = ["s3:GetObject"]
-      resources = [for k in concat(statement.value.read_keys, ["${statement.value.own_prefix}/terraform.tfstate"]) : "${local.bucket_arn}/${k}"]
+      sid     = "Read${title(statement.key)}"
+      actions = ["s3:GetObject"]
+      resources = concat(
+        [for k in statement.value.read_keys : "${local.bucket_arn}/${k}"],
+        ["${local.bucket_arn}/${statement.value.own_prefix}/*"],
+      )
 
       principals {
         type        = "AWS"
