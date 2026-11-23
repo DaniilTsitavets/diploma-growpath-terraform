@@ -10,6 +10,7 @@ resource "aws_organizations_organization" "this" {
     "guardduty.amazonaws.com",
     "iam.amazonaws.com",
     "notifications.amazonaws.com",
+    "ram.amazonaws.com",
     "sso.amazonaws.com",
   ]
 
