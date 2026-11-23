@@ -38,7 +38,7 @@ module "github_plan_role" {
 
   create_inline_policy = true
   inline_policy_permissions = {
-    state_lock = {
+    StateLock = {
       actions   = ["s3:PutObject", "s3:DeleteObject"]
       resources = ["arn:aws:s3:::${var.state_bucket}/*.tflock"]
     }
