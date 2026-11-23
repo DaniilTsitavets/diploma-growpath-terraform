@@ -23,6 +23,11 @@ case "$layer" in
   01-identity)
     jq -n --arg bucket "$STATE_BUCKET" '{state_bucket: $bucket}' > "${dir}/terraform.tfvars.json"
     ;;
+  02-network)
+    echo "$DOMAIN_NAME" | mask
+    jq -n --arg domain "$DOMAIN_NAME" --arg bucket "$STATE_BUCKET" \
+      '{domain_name: $domain, state_bucket: $bucket}' > "${dir}/terraform.tfvars.json"
+    ;;
   *)
     echo "unknown layer: ${layer}" >&2
     exit 1
