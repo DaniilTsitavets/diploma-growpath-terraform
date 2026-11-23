@@ -1,0 +1,29 @@
+name: 00-org
+
+on:
+  pull_request:
+    paths:
+      - infra/00-org/**
+      - .github/workflows/00-org.yml
+      - .github/workflows/terraform.yml
+      - .github/scripts/prepare.sh
+  push:
+    branches: [main]
+    paths:
+      - infra/00-org/**
+      - .github/workflows/00-org.yml
+      - .github/workflows/terraform.yml
+      - .github/scripts/prepare.sh
+
+permissions:
+  contents: read
+
+jobs:
+  terraform:
+    uses: ./.github/workflows/terraform.yml
+    with:
+      layer: 00-org
+    secrets: inherit
+    permissions:
+      id-token: write
+      contents: read

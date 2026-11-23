@@ -1,0 +1,29 @@
+name: 01-identity
+
+on:
+  pull_request:
+    paths:
+      - infra/01-identity/**
+      - .github/workflows/01-identity.yml
+      - .github/workflows/terraform.yml
+      - .github/scripts/prepare.sh
+  push:
+    branches: [main]
+    paths:
+      - infra/01-identity/**
+      - .github/workflows/01-identity.yml
+      - .github/workflows/terraform.yml
+      - .github/scripts/prepare.sh
+
+permissions:
+  contents: read
+
+jobs:
+  terraform:
+    uses: ./.github/workflows/terraform.yml
+    with:
+      layer: 01-identity
+    secrets: inherit
+    permissions:
+      id-token: write
+      contents: read
