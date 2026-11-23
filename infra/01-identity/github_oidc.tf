@@ -4,8 +4,8 @@ resource "aws_iam_openid_connect_provider" "github" {
 }
 
 locals {
-  github_sub_apply = "repo:${var.github_repository}:environment:${var.github_apply_environment}"
-  github_sub_pr    = "repo:${var.github_repository}:pull_request"
+  github_sub_apply = "repo:${var.github_repository_subject}:environment:${var.github_apply_environment}"
+  github_sub_pr    = "repo:${var.github_repository_subject}:pull_request"
 }
 
 data "aws_iam_policy_document" "apply_trust" {

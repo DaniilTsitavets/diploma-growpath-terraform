@@ -15,10 +15,10 @@ variable "state_region" {
   default     = "eu-north-1"
 }
 
-variable "github_repository" {
-  description = "GitHub repository (owner/name) allowed to assume the CI roles."
+variable "github_repository_subject" {
+  description = "Repository part of the GitHub OIDC subject claim, in the immutable owner@ownerId/repo@repoId form."
   type        = string
-  default     = "DaniilTsitavets/diploma-growpath-terraform"
+  default     = "DaniilTsitavets@175641668/diploma-growpath-terraform@1468996059"
 }
 
 variable "github_apply_environment" {
