@@ -4,8 +4,8 @@ resource "aws_iam_openid_connect_provider" "github" {
 }
 
 locals {
-  github_sub_main = "repo:${var.github_repository}:ref:refs/heads/main"
-  github_sub_pr   = "repo:${var.github_repository}:pull_request"
+  github_sub_apply = "repo:${var.github_repository}:environment:${var.github_apply_environment}"
+  github_sub_pr    = "repo:${var.github_repository}:pull_request"
 }
 
 data "aws_iam_policy_document" "apply_trust" {
@@ -26,7 +26,7 @@ data "aws_iam_policy_document" "apply_trust" {
     condition {
       test     = "StringEquals"
       variable = "token.actions.githubusercontent.com:sub"
-      values   = [local.github_sub_main]
+      values   = [local.github_sub_apply]
     }
   }
 }
