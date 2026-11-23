@@ -23,6 +23,7 @@ jobs:
     uses: ./.github/workflows/terraform.yml
     with:
       layer: 00-org
+    secrets: inherit
     permissions:
       id-token: write
       contents: read
