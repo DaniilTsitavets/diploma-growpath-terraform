@@ -1,0 +1,1 @@
+state_bucket = "growpath-tfstate-<management-account-id>"
