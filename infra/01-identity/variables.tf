@@ -21,6 +21,12 @@ variable "github_repository" {
   default     = "DaniilTsitavets/diploma-growpath-terraform"
 }
 
+variable "github_apply_environment" {
+  description = "GitHub environment whose jobs may assume the apply role."
+  type        = string
+  default     = "management"
+}
+
 variable "experts_access" {
   description = "Permission set granted to the experts group on every account."
   type        = string
