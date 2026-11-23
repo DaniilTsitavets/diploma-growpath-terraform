@@ -1,0 +1,8 @@
+account_emails = {
+  logging = "aws+logging@yourdomain.com"
+  network = "aws+network@yourdomain.com"
+  prod    = "aws+prod@yourdomain.com"
+}
+
+budget_notification_email = "aws+budgets@yourdomain.com"
+monthly_budget_usd        = 70
