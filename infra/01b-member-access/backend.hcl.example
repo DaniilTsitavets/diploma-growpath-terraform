@@ -1,0 +1,2 @@
+bucket = "growpath-tfstate-<management-account-id>"
+region = "eu-north-1"
