@@ -1,90 +1,73 @@
-resource "aws_iam_openid_connect_provider" "github" {
-  url            = "https://token.actions.githubusercontent.com"
-  client_id_list = ["sts.amazonaws.com"]
+module "github_oidc_provider" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-oidc-provider"
+  version = "~> 6.11"
 }
 
-locals {
-  github_sub_apply = "repo:${var.github_repository}:environment:${var.github_apply_environment}"
-  github_sub_pr    = "repo:${var.github_repository}:pull_request"
-}
+module "github_apply_role" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role"
+  version = "~> 6.11"
 
-data "aws_iam_policy_document" "apply_trust" {
-  statement {
-    actions = ["sts:AssumeRoleWithWebIdentity"]
-
-    principals {
-      type        = "Federated"
-      identifiers = [aws_iam_openid_connect_provider.github.arn]
-    }
-
-    condition {
-      test     = "StringEquals"
-      variable = "token.actions.githubusercontent.com:aud"
-      values   = ["sts.amazonaws.com"]
-    }
-
-    condition {
-      test     = "StringEquals"
-      variable = "token.actions.githubusercontent.com:sub"
-      values   = [local.github_sub_apply]
-    }
-  }
-}
-
-data "aws_iam_policy_document" "plan_trust" {
-  statement {
-    actions = ["sts:AssumeRoleWithWebIdentity"]
-
-    principals {
-      type        = "Federated"
-      identifiers = [aws_iam_openid_connect_provider.github.arn]
-    }
-
-    condition {
-      test     = "StringEquals"
-      variable = "token.actions.githubusercontent.com:aud"
-      values   = ["sts.amazonaws.com"]
-    }
-
-    condition {
-      test     = "StringEquals"
-      variable = "token.actions.githubusercontent.com:sub"
-      values   = [local.github_sub_pr]
-    }
-  }
-}
-
-resource "aws_iam_role" "github_apply" {
   name                 = "GitHubActionsApplyRole"
-  assume_role_policy   = data.aws_iam_policy_document.apply_trust.json
+  use_name_prefix      = false
   max_session_duration = 3600
-}
 
-resource "aws_iam_role_policy_attachment" "github_apply" {
-  role       = aws_iam_role.github_apply.name
-  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
-}
+  enable_github_oidc = true
+  oidc_subjects      = ["${var.github_repository_subject}:environment:${var.github_apply_environment}"]
 
-data "aws_iam_policy_document" "plan_state_lock" {
-  statement {
-    actions   = ["s3:PutObject", "s3:DeleteObject"]
-    resources = ["arn:aws:s3:::${var.state_bucket}/*.tflock"]
+  policies = {
+    AdministratorAccess = "arn:aws:iam::aws:policy/AdministratorAccess"
   }
+
+  depends_on = [module.github_oidc_provider]
 }
 
-resource "aws_iam_role" "github_plan" {
+module "github_plan_role" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role"
+  version = "~> 6.11"
+
   name                 = "GitHubActionsPlanRole"
-  assume_role_policy   = data.aws_iam_policy_document.plan_trust.json
+  use_name_prefix      = false
   max_session_duration = 3600
+
+  enable_github_oidc = true
+  oidc_subjects      = ["${var.github_repository_subject}:pull_request"]
+
+  policies = {
+    ReadOnlyAccess = "arn:aws:iam::aws:policy/ReadOnlyAccess"
+  }
+
+  create_inline_policy = true
+  inline_policy_permissions = {
+    StateLock = {
+      actions   = ["s3:PutObject", "s3:DeleteObject"]
+      resources = ["arn:aws:s3:::${var.state_bucket}/*.tflock"]
+    }
+  }
+
+  depends_on = [module.github_oidc_provider]
 }
 
-resource "aws_iam_role_policy_attachment" "github_plan" {
-  role       = aws_iam_role.github_plan.name
-  policy_arn = "arn:aws:iam::aws:policy/ReadOnlyAccess"
+moved {
+  from = aws_iam_openid_connect_provider.github
+  to   = module.github_oidc_provider.aws_iam_openid_connect_provider.this[0]
 }
 
-resource "aws_iam_role_policy" "github_plan_state_lock" {
-  name   = "state-lock"
-  role   = aws_iam_role.github_plan.id
-  policy = data.aws_iam_policy_document.plan_state_lock.json
+moved {
+  from = aws_iam_role.github_apply
+  to   = module.github_apply_role.aws_iam_role.this[0]
+}
+
+moved {
+  from = aws_iam_role_policy_attachment.github_apply
+  to   = module.github_apply_role.aws_iam_role_policy_attachment.this["AdministratorAccess"]
+}
+
+moved {
+  from = aws_iam_role.github_plan
+  to   = module.github_plan_role.aws_iam_role.this[0]
+}
+
+moved {
+  from = aws_iam_role_policy_attachment.github_plan
+  to   = module.github_plan_role.aws_iam_role_policy_attachment.this["ReadOnlyAccess"]
 }

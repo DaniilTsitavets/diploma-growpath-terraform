@@ -1,11 +1,11 @@
 output "github_apply_role_arn" {
   description = "Role assumed by GitHub Actions on pushes to main."
-  value       = aws_iam_role.github_apply.arn
+  value       = module.github_apply_role.arn
 }
 
 output "github_plan_role_arn" {
   description = "Read-only role assumed by GitHub Actions on pull requests."
-  value       = aws_iam_role.github_plan.arn
+  value       = module.github_plan_role.arn
 }
 
 output "experts_group_id" {
