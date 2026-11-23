@@ -1,0 +1,22 @@
+terraform {
+  required_version = ">= 1.11.0"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 6.73"
+    }
+  }
+}
+
+provider "aws" {
+  region = var.region
+
+  default_tags {
+    tags = {
+      Project   = "growpath"
+      Layer     = "00-org"
+      ManagedBy = "terraform"
+    }
+  }
+}
