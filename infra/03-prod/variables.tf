@@ -93,3 +93,15 @@ variable "ec2_vcpu_quota" {
   type        = number
   default     = 32
 }
+
+variable "platform_hosts" {
+  description = "Host names, relative to the domain, of the platform tools behind the internal admin-tools ALB."
+  type        = list(string)
+  default     = ["argocd", "grafana"]
+}
+
+variable "enable_platform_dns" {
+  description = "Create the DNS records of the platform tools once the admin-tools ALB exists."
+  type        = bool
+  default     = false
+}
