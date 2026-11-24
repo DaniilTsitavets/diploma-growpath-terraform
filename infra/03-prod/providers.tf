@@ -39,3 +39,21 @@ provider "aws" {
     }
   }
 }
+
+provider "aws" {
+  alias  = "dns"
+  region = var.region
+
+  assume_role {
+    role_arn = var.dns_role_arn
+  }
+
+  default_tags {
+    tags = {
+      Project     = "growpath"
+      Layer       = "03-prod"
+      Environment = "prod"
+      ManagedBy   = "terraform"
+    }
+  }
+}

@@ -33,4 +33,5 @@ locals {
   network_vpc_id       = data.terraform_remote_state.network.outputs.vpc_id
   network_vpc_cidr     = data.terraform_remote_state.network.outputs.vpc_cidr_block
   network_public_rt_id = data.terraform_remote_state.network.outputs.public_route_table_id
+  zone_id              = data.terraform_remote_state.network.outputs.zone_id
 }
