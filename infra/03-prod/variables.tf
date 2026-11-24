@@ -60,3 +60,8 @@ variable "api_throttling_burst_limit" {
   type        = number
   default     = 40
 }
+
+variable "dns_role_arn" {
+  description = "Role in the network account that manages records of the public DNS zone."
+  type        = string
+}

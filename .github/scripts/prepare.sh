@@ -31,8 +31,9 @@ case "$layer" in
   03-prod)
     echo "$NETWORK_ROLE_ARN" | mask
     echo "$DOMAIN_NAME" | mask
-    jq -n --arg bucket "$STATE_BUCKET" --arg role "$NETWORK_ROLE_ARN" --arg domain "$DOMAIN_NAME" \
-      '{state_bucket: $bucket, network_role_arn: $role, domain_name: $domain}' > "${dir}/terraform.tfvars.json"
+    echo "$DNS_ROLE_ARN" | mask
+    jq -n --arg bucket "$STATE_BUCKET" --arg role "$NETWORK_ROLE_ARN" --arg dns "$DNS_ROLE_ARN" --arg domain "$DOMAIN_NAME" \
+      '{state_bucket: $bucket, network_role_arn: $role, dns_role_arn: $dns, domain_name: $domain}' > "${dir}/terraform.tfvars.json"
     ;;
   *)
     echo "unknown layer: ${layer}" >&2

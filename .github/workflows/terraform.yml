@@ -29,6 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NETWORK_ROLE_ARN: ${{ secrets.TF_NETWORK_READER_ROLE_ARN }}
+      DNS_ROLE_ARN: ${{ secrets.TF_NETWORK_READER_ROLE_ARN }}
     permissions:
       id-token: write
       contents: read
@@ -62,6 +63,7 @@ jobs:
     environment: ${{ inputs.environment }}
     env:
       NETWORK_ROLE_ARN: ${{ secrets.TF_NETWORK_PEERING_ROLE_ARN }}
+      DNS_ROLE_ARN: ${{ secrets.TF_NETWORK_DNS_ROLE_ARN }}
     permissions:
       id-token: write
       contents: read
