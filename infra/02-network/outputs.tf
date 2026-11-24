@@ -1,26 +1,16 @@
 output "vpc_id" {
-  description = "ID of the shared VPC."
+  description = "ID of the network VPC."
   value       = module.vpc.vpc_id
 }
 
 output "vpc_cidr_block" {
-  description = "CIDR block of the shared VPC."
+  description = "CIDR block of the network VPC."
   value       = module.vpc.vpc_cidr_block
 }
 
-output "azs" {
-  description = "Availability zones used by the subnets."
-  value       = module.vpc.azs
-}
-
-output "private_subnet_ids" {
-  description = "IDs of the private subnets shared with the prod account."
-  value       = module.vpc.private_subnets
-}
-
-output "public_subnet_ids" {
-  description = "IDs of the public subnets."
-  value       = module.vpc.public_subnets
+output "public_route_table_id" {
+  description = "Route table of the public subnet, where the prod route is added."
+  value       = module.vpc.public_route_table_ids[0]
 }
 
 output "zone_id" {
@@ -36,6 +26,11 @@ output "zone_name_servers" {
 output "dns_record_writer_role_arn" {
   description = "Role in this account that the prod apply role assumes to write DNS records."
   value       = module.dns_record_writer.arn
+}
+
+output "vpc_peering_manager_role_arn" {
+  description = "Role in this account that the prod apply role assumes to accept the peering and add routes."
+  value       = module.vpc_peering_manager.arn
 }
 
 output "tailscale_auth_key_parameter" {
