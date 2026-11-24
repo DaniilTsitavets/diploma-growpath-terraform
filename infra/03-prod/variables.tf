@@ -37,3 +37,8 @@ variable "services" {
   type        = list(string)
   default     = ["commerce", "entitlement", "plant-care", "expert-consultation"]
 }
+
+variable "domain_name" {
+  description = "Public domain of the platform."
+  type        = string
+}

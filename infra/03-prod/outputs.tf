@@ -32,3 +32,17 @@ output "ecr_repository_urls" {
   description = "ECR repository URL per service."
   value       = { for name, repo in module.ecr : name => repo.repository_url }
 }
+
+output "s3_buckets" {
+  description = "Names of the application buckets."
+  value = {
+    frontend = module.s3_frontend.s3_bucket_id
+    media    = module.s3_media.s3_bucket_id
+    photos   = module.s3_photos.s3_bucket_id
+  }
+}
+
+output "vector_bucket_name" {
+  description = "Name of the S3 Vectors bucket for the knowledge base."
+  value       = aws_s3vectors_vector_bucket.kb.vector_bucket_name
+}
