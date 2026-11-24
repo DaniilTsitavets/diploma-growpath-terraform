@@ -31,3 +31,9 @@ variable "enable_nat_gateway" {
   type        = bool
   default     = true
 }
+
+variable "services" {
+  description = "Backend services that get an ECR repository."
+  type        = list(string)
+  default     = ["commerce", "entitlement", "plant-care", "expert-consultation"]
+}
