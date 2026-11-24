@@ -22,12 +22,13 @@ env:
   ACCOUNT_EMAILS: ${{ secrets.TF_ACCOUNT_EMAILS }}
   BUDGET_EMAIL: ${{ secrets.TF_BUDGET_EMAIL }}
   DOMAIN_NAME: ${{ secrets.TF_DOMAIN_NAME }}
-  NETWORK_PEERING_ROLE_ARN: ${{ secrets.TF_NETWORK_PEERING_ROLE_ARN }}
 
 jobs:
   plan:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    env:
+      NETWORK_ROLE_ARN: ${{ secrets.TF_NETWORK_READER_ROLE_ARN }}
     permissions:
       id-token: write
       contents: read
@@ -59,6 +60,8 @@ jobs:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
+    env:
+      NETWORK_ROLE_ARN: ${{ secrets.TF_NETWORK_PEERING_ROLE_ARN }}
     permissions:
       id-token: write
       contents: read

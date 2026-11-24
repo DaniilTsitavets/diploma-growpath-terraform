@@ -29,8 +29,8 @@ case "$layer" in
       '{domain_name: $domain, state_bucket: $bucket}' > "${dir}/terraform.tfvars.json"
     ;;
   03-prod)
-    echo "$NETWORK_PEERING_ROLE_ARN" | mask
-    jq -n --arg bucket "$STATE_BUCKET" --arg role "$NETWORK_PEERING_ROLE_ARN" \
+    echo "$NETWORK_ROLE_ARN" | mask
+    jq -n --arg bucket "$STATE_BUCKET" --arg role "$NETWORK_ROLE_ARN" \
       '{state_bucket: $bucket, network_role_arn: $role}' > "${dir}/terraform.tfvars.json"
     ;;
   *)
