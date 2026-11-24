@@ -50,6 +50,15 @@ module "eks" {
     }
   }
 
+  node_security_group_additional_rules = {
+    cert_manager_webhook = {
+      description                   = "Cluster API to the cert-manager webhook"
+      from_port                     = 10260
+      to_port                       = 10260
+      source_cluster_security_group = true
+    }
+  }
+
   node_security_group_tags = {
     "karpenter.sh/discovery" = var.cluster_name
   }
