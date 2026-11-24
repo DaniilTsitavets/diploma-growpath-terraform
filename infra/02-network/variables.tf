@@ -15,15 +15,15 @@ variable "domain_name" {
 }
 
 variable "vpc_cidr" {
-  description = "CIDR block of the shared VPC."
+  description = "CIDR block of the network VPC; must not overlap with the prod VPC."
   type        = string
-  default     = "10.0.0.0/16"
+  default     = "10.255.0.0/24"
 }
 
-variable "cluster_name" {
-  description = "EKS cluster name used for the Karpenter discovery subnet tag."
-  type        = string
-  default     = "growpath"
+variable "advertise_routes" {
+  description = "CIDR blocks the Tailscale router advertises to the tailnet."
+  type        = list(string)
+  default     = ["10.0.0.0/16"]
 }
 
 variable "tailscale_instance_type" {
