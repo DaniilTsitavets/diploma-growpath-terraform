@@ -238,7 +238,8 @@
         "bedrock:InvokeModel",
         "bedrock:InvokeModelWithResponseStream",
         "bedrock:ListFoundationModels",
-        "bedrock:ListInferenceProfiles"
+        "bedrock:ListInferenceProfiles",
+        "pricing:GetProducts"
       ],
       "Resource": "*",
       "Condition": {
