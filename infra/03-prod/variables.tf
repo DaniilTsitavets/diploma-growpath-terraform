@@ -65,3 +65,13 @@ variable "dns_role_arn" {
   description = "Role in the network account that manages records of the public DNS zone."
   type        = string
 }
+
+variable "frontend_repository_subject" {
+  description = "Frontend repository part of the GitHub OIDC subject claim, in the immutable owner@ownerId/repo@repoId form."
+  type        = string
+}
+
+variable "backend_repository_subject" {
+  description = "Backend repository part of the GitHub OIDC subject claim, in the immutable owner@ownerId/repo@repoId form."
+  type        = string
+}
