@@ -20,6 +20,8 @@ module "s3_frontend" {
   restrict_public_buckets = true
 
   attach_deny_insecure_transport_policy = true
+  attach_policy                         = true
+  policy                                = data.aws_iam_policy_document.frontend_oac.json
 
   versioning = {
     enabled = true
@@ -63,6 +65,8 @@ module "s3_media" {
   restrict_public_buckets = true
 
   attach_deny_insecure_transport_policy = true
+  attach_policy                         = true
+  policy                                = data.aws_iam_policy_document.media_oac.json
 
   server_side_encryption_configuration = {
     rule = {
