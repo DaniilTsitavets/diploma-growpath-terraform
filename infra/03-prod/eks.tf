@@ -71,6 +71,7 @@ module "eks" {
     kube-proxy     = {}
     coredns        = {}
     metrics-server = {}
+    cert-manager   = {}
     external-dns = {
       pod_identity_association = [{
         role_arn        = module.external_dns_pod_identity.iam_role_arn
