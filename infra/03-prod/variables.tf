@@ -99,9 +99,3 @@ variable "platform_hosts" {
   type        = list(string)
   default     = ["argocd", "grafana"]
 }
-
-variable "enable_platform_dns" {
-  description = "Create the DNS records of the platform tools once the admin-tools ALB exists."
-  type        = bool
-  default     = false
-}

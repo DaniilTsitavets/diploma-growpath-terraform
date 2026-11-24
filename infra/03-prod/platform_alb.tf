@@ -73,27 +73,3 @@ resource "aws_acm_certificate_validation" "platform" {
   certificate_arn         = module.platform_acm.acm_certificate_arn
   validation_record_fqdns = [for record in aws_route53_record.platform_acm_validation : record.fqdn]
 }
-
-data "aws_lb" "platform" {
-  count = var.enable_platform_dns ? 1 : 0
-
-  tags = {
-    "ingress-name" = "admin-tools"
-  }
-}
-
-resource "aws_route53_record" "platform" {
-  provider = aws.dns
-
-  for_each = var.enable_platform_dns ? toset(local.platform_fqdns) : toset([])
-
-  zone_id = local.zone_id
-  name    = each.value
-  type    = "A"
-
-  alias {
-    name                   = data.aws_lb.platform[0].dns_name
-    zone_id                = data.aws_lb.platform[0].zone_id
-    evaluate_target_health = true
-  }
-}
