@@ -75,3 +75,9 @@ variable "backend_repository_subject" {
   description = "Backend repository part of the GitHub OIDC subject claim, in the immutable owner@ownerId/repo@repoId form."
   type        = string
 }
+
+variable "ci_environment" {
+  description = "GitHub environment, defined in the frontend and backend repositories, whose jobs may assume the deploy roles."
+  type        = string
+  default     = "prod"
+}

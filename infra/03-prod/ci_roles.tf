@@ -6,7 +6,7 @@ module "frontend_ci_role" {
   use_name_prefix = false
 
   enable_github_oidc = true
-  oidc_subjects      = ["${var.frontend_repository_subject}:ref:refs/heads/main"]
+  oidc_subjects      = ["${var.frontend_repository_subject}:environment:${var.ci_environment}"]
 
   create_inline_policy = true
   inline_policy_permissions = {
@@ -32,7 +32,7 @@ module "backend_ci_role" {
   use_name_prefix = false
 
   enable_github_oidc = true
-  oidc_subjects      = ["${var.backend_repository_subject}:ref:refs/heads/main"]
+  oidc_subjects      = ["${var.backend_repository_subject}:environment:${var.ci_environment}"]
 
   create_inline_policy = true
   inline_policy_permissions = {
