@@ -40,3 +40,26 @@ module "external_dns_pod_identity" {
     resources = ["arn:aws:iam::${local.network_account_id}:role/DnsRecordWriter"]
   }]
 }
+
+module "external_secrets_pod_identity" {
+  source  = "terraform-aws-modules/eks-pod-identity/aws"
+  version = "~> 2.11"
+
+  name            = "${var.cluster_name}-external-secrets"
+  use_name_prefix = false
+
+  attach_custom_policy = true
+  policy_statements = [{
+    sid       = "ReadProjectSecrets"
+    actions   = ["secretsmanager:GetSecretValue", "secretsmanager:DescribeSecret"]
+    resources = ["arn:aws:secretsmanager:${var.region}:${data.aws_caller_identity.current.account_id}:secret:${var.cluster_name}/*"]
+  }]
+
+  associations = {
+    this = {
+      cluster_name    = module.eks.cluster_name
+      namespace       = "external-secrets"
+      service_account = "external-secrets"
+    }
+  }
+}
