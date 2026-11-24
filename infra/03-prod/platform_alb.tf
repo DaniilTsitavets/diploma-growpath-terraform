@@ -49,14 +49,22 @@ module "platform_acm" {
 resource "aws_route53_record" "platform_acm_validation" {
   provider = aws.dns
 
-  for_each = {
-    for option in module.platform_acm.acm_certificate_domain_validation_options : option.domain_name => option
-  }
+  # Keyed by the known host names, because the validation options are only known after apply.
+  for_each = toset(local.platform_fqdns)
 
-  zone_id         = local.zone_id
-  name            = each.value.resource_record_name
-  type            = each.value.resource_record_type
-  records         = [each.value.resource_record_value]
+  zone_id = local.zone_id
+  name = one([
+    for option in module.platform_acm.acm_certificate_domain_validation_options : option.resource_record_name
+    if option.domain_name == each.key
+  ])
+  type = one([
+    for option in module.platform_acm.acm_certificate_domain_validation_options : option.resource_record_type
+    if option.domain_name == each.key
+  ])
+  records = [one([
+    for option in module.platform_acm.acm_certificate_domain_validation_options : option.resource_record_value
+    if option.domain_name == each.key
+  ])]
   ttl             = 60
   allow_overwrite = true
 }
