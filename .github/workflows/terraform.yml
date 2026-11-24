@@ -22,6 +22,7 @@ env:
   ACCOUNT_EMAILS: ${{ secrets.TF_ACCOUNT_EMAILS }}
   BUDGET_EMAIL: ${{ secrets.TF_BUDGET_EMAIL }}
   DOMAIN_NAME: ${{ secrets.TF_DOMAIN_NAME }}
+  NETWORK_PEERING_ROLE_ARN: ${{ secrets.TF_NETWORK_PEERING_ROLE_ARN }}
 
 jobs:
   plan:
