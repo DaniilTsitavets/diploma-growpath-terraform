@@ -27,3 +27,8 @@ output "peering_connection_id" {
   description = "ID of the peering connection to the network VPC."
   value       = aws_vpc_peering_connection.network.id
 }
+
+output "ecr_repository_urls" {
+  description = "ECR repository URL per service."
+  value       = { for name, repo in module.ecr : name => repo.repository_url }
+}
