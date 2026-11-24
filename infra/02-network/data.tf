@@ -21,4 +21,5 @@ locals {
   azs                 = slice(data.aws_availability_zones.available.names, 0, 3)
   prod_account_id     = data.terraform_remote_state.org.outputs.account_ids["prod"]
   prod_apply_role_arn = "arn:aws:iam::${local.prod_account_id}:role/GitHubActionsApplyRole"
+  prod_plan_role_arn  = "arn:aws:iam::${local.prod_account_id}:role/GitHubActionsPlanRole"
 }
