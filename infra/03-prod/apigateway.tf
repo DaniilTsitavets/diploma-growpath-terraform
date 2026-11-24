@@ -80,6 +80,10 @@ module "api" {
   description   = "GrowPath public API"
   protocol_type = "HTTP"
 
+  create_domain_name    = false
+  create_domain_records = false
+  create_certificate    = false
+
   authorizers = {
     cognito = {
       authorizer_type  = "JWT"
