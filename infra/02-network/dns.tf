@@ -22,7 +22,8 @@ module "dns_record_writer" {
       }]
     }
     ExternalDns = {
-      actions = ["sts:AssumeRole"]
+      # Pod Identity sessions carry tags, which a cross-account chain must be allowed to pass on.
+      actions = ["sts:AssumeRole", "sts:TagSession"]
       # Account root plus a condition, so the apply order of the layers does not matter.
       principals = [{
         type        = "AWS"

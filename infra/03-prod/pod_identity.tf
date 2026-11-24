@@ -36,7 +36,7 @@ module "external_dns_pod_identity" {
   attach_custom_policy = true
   policy_statements = [{
     sid       = "AssumeDnsRecordWriter"
-    actions   = ["sts:AssumeRole"]
+    actions   = ["sts:AssumeRole", "sts:TagSession"]
     resources = ["arn:aws:iam::${local.network_account_id}:role/DnsRecordWriter"]
   }]
 }
