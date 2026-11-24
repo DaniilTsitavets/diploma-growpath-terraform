@@ -76,3 +76,13 @@ output "karpenter_node_role_name" {
   description = "IAM role of the nodes Karpenter launches."
   value       = module.karpenter.node_iam_role_name
 }
+
+output "platform_alb_security_group_id" {
+  description = "Security group for the admin-tools ALB Ingress annotation."
+  value       = module.platform_alb_sg.id
+}
+
+output "platform_certificate_arn" {
+  description = "Regional ACM certificate for the platform hosts."
+  value       = aws_acm_certificate_validation.platform.certificate_arn
+}
