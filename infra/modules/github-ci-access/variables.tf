@@ -18,3 +18,9 @@ variable "assumable_role_arns" {
   type        = list(string)
   default     = []
 }
+
+variable "additional_read_actions" {
+  description = "Read-only actions of services that the managed ReadOnlyAccess policy does not cover yet."
+  type        = list(string)
+  default     = []
+}

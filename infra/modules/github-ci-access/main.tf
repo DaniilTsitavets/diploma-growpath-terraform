@@ -50,6 +50,12 @@ module "plan_role" {
         resources = var.assumable_role_arns
       }
     } : {},
+    length(var.additional_read_actions) > 0 ? {
+      AdditionalRead = {
+        actions   = var.additional_read_actions
+        resources = ["*"]
+      }
+    } : {},
   )
 
   depends_on = [module.oidc_provider]
