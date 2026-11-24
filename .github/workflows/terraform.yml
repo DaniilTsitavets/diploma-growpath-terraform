@@ -30,6 +30,8 @@ jobs:
     env:
       NETWORK_ROLE_ARN: ${{ secrets.TF_NETWORK_READER_ROLE_ARN }}
       DNS_ROLE_ARN: ${{ secrets.TF_NETWORK_READER_ROLE_ARN }}
+      FRONTEND_REPOSITORY_SUBJECT: ${{ secrets.TF_FRONTEND_REPOSITORY_SUBJECT }}
+      BACKEND_REPOSITORY_SUBJECT: ${{ secrets.TF_BACKEND_REPOSITORY_SUBJECT }}
     permissions:
       id-token: write
       contents: read
@@ -64,6 +66,8 @@ jobs:
     env:
       NETWORK_ROLE_ARN: ${{ secrets.TF_NETWORK_PEERING_ROLE_ARN }}
       DNS_ROLE_ARN: ${{ secrets.TF_NETWORK_DNS_ROLE_ARN }}
+      FRONTEND_REPOSITORY_SUBJECT: ${{ secrets.TF_FRONTEND_REPOSITORY_SUBJECT }}
+      BACKEND_REPOSITORY_SUBJECT: ${{ secrets.TF_BACKEND_REPOSITORY_SUBJECT }}
     permissions:
       id-token: write
       contents: read

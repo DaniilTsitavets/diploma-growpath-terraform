@@ -46,3 +46,13 @@ output "vector_bucket_name" {
   description = "Name of the S3 Vectors bucket for the knowledge base."
   value       = aws_s3vectors_vector_bucket.kb.vector_bucket_name
 }
+
+output "frontend_ci_role_arn" {
+  description = "Role the frontend repository assumes to deploy the SPA."
+  value       = module.frontend_ci_role.arn
+}
+
+output "backend_ci_role_arn" {
+  description = "Role the backend repository assumes to push images."
+  value       = module.backend_ci_role.arn
+}
