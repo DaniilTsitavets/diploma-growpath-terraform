@@ -22,4 +22,5 @@ locals {
   prod_account_id     = data.terraform_remote_state.org.outputs.account_ids["prod"]
   prod_apply_role_arn = "arn:aws:iam::${local.prod_account_id}:role/GitHubActionsApplyRole"
   prod_plan_role_arn  = "arn:aws:iam::${local.prod_account_id}:role/GitHubActionsPlanRole"
+  external_dns_role   = "arn:aws:iam::${local.prod_account_id}:role/growpath-external-dns"
 }

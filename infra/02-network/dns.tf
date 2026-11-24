@@ -21,6 +21,19 @@ module "dns_record_writer" {
         identifiers = [local.prod_apply_role_arn]
       }]
     }
+    ExternalDns = {
+      actions = ["sts:AssumeRole"]
+      # Account root plus a condition, so the apply order of the layers does not matter.
+      principals = [{
+        type        = "AWS"
+        identifiers = ["arn:aws:iam::${local.prod_account_id}:root"]
+      }]
+      condition = [{
+        test     = "ArnEquals"
+        variable = "aws:PrincipalArn"
+        values   = [local.external_dns_role]
+      }]
+    }
   }
 
   create_inline_policy = true
