@@ -29,8 +29,8 @@ module "eks" {
 
   access_entries = {
     sso_admin = {
-      # The access entry principal must not contain the reserved SSO path.
-      principal_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${tolist(data.aws_iam_roles.sso_admin.names)[0]}"
+      # EKS rejects this role without its reserved SSO path, so use the ARN as IAM returns it.
+      principal_arn = tolist(data.aws_iam_roles.sso_admin.arns)[0]
       policy_associations = {
         admin = {
           policy_arn   = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
