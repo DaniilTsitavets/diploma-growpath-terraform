@@ -68,8 +68,23 @@ module "eks" {
         }
       })
     }
-    kube-proxy = {}
-    coredns    = {}
+    kube-proxy     = {}
+    coredns        = {}
+    metrics-server = {}
+    external-dns = {
+      pod_identity_association = [{
+        role_arn        = module.external_dns_pod_identity.iam_role_arn
+        service_account = "external-dns"
+      }]
+      configuration_values = jsonencode({
+        domainFilters = [var.domain_name]
+        txtOwnerId    = var.cluster_name
+        extraArgs = [
+          "--aws-zone-type=public",
+          "--aws-assume-role=arn:aws:iam::${local.network_account_id}:role/DnsRecordWriter",
+        ]
+      })
+    }
     aws-ebs-csi-driver = {
       pod_identity_association = [{
         role_arn        = module.ebs_csi_pod_identity.iam_role_arn
