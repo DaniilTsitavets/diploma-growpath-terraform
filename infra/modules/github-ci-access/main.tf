@@ -37,12 +37,20 @@ module "plan_role" {
   }
 
   create_inline_policy = true
-  inline_policy_permissions = {
-    StateLock = {
-      actions   = ["s3:PutObject", "s3:DeleteObject"]
-      resources = ["arn:aws:s3:::${var.state_bucket}/*.tflock"]
-    }
-  }
+  inline_policy_permissions = merge(
+    {
+      StateLock = {
+        actions   = ["s3:PutObject", "s3:DeleteObject"]
+        resources = ["arn:aws:s3:::${var.state_bucket}/*.tflock"]
+      }
+    },
+    length(var.assumable_role_arns) > 0 ? {
+      AssumeRoles = {
+        actions   = ["sts:AssumeRole"]
+        resources = var.assumable_role_arns
+      }
+    } : {},
+  )
 
   depends_on = [module.oidc_provider]
 }
