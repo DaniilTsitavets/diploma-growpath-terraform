@@ -29,7 +29,7 @@ variable "cluster_name" {
 variable "enable_nat_gateway" {
   description = "Create the NAT gateway; turn it off to stop paying for it while the cluster is down."
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "services" {
@@ -80,4 +80,16 @@ variable "ci_environment" {
   description = "GitHub environment, defined in the frontend and backend repositories, whose jobs may assume the deploy roles."
   type        = string
   default     = "prod"
+}
+
+variable "kubernetes_version" {
+  description = "EKS Kubernetes version."
+  type        = string
+  default     = "1.36"
+}
+
+variable "ec2_vcpu_quota" {
+  description = "Requested vCPU quota for standard On-Demand and Spot instances."
+  type        = number
+  default     = 32
 }
