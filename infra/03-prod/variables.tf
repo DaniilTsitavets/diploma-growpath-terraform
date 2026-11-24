@@ -29,7 +29,7 @@ variable "cluster_name" {
 variable "enable_nat_gateway" {
   description = "Create the NAT gateway; turn it off to stop paying for it while the cluster is down."
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "services" {
