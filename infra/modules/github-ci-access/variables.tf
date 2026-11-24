@@ -12,3 +12,9 @@ variable "state_bucket" {
   description = "Terraform state bucket (in the management account) the plan role writes lock files to."
   type        = string
 }
+
+variable "assumable_role_arns" {
+  description = "Roles in other accounts that the plan role may assume."
+  type        = list(string)
+  default     = []
+}

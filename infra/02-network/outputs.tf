@@ -33,6 +33,11 @@ output "vpc_peering_manager_role_arn" {
   value       = module.vpc_peering_manager.arn
 }
 
+output "network_reader_role_arn" {
+  description = "Read-only role in this account that the prod plan role assumes to plan cross-account resources."
+  value       = module.network_reader.arn
+}
+
 output "tailscale_auth_key_parameter" {
   description = "SSM parameter that holds the Tailscale auth key."
   value       = aws_ssm_parameter.tailscale_auth_key.name
