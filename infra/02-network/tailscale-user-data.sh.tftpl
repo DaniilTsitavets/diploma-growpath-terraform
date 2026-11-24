@@ -1,9 +1,16 @@
 #!/bin/bash
 set -euo pipefail
 
-dnf install -y dnf-plugins-core
-dnf config-manager --add-repo https://pkgs.tailscale.com/stable/amazon-linux/2023/tailscale.repo
-dnf install -y tailscale
+retry() {
+  for attempt in 1 2 3 4 5; do
+    "$@" && return 0
+    sleep 15
+  done
+  return 1
+}
+
+retry curl -fsSL https://pkgs.tailscale.com/stable/amazon-linux/2023/tailscale.repo -o /etc/yum.repos.d/tailscale.repo
+retry dnf install -y tailscale
 
 cat > /etc/sysctl.d/99-tailscale.conf <<'SYSCTL'
 net.ipv4.ip_forward = 1

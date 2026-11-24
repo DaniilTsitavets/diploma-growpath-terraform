@@ -29,5 +29,5 @@ variable "advertise_routes" {
 variable "tailscale_instance_type" {
   description = "Instance type of the Tailscale subnet router."
   type        = string
-  default     = "t4g.nano"
+  default     = "t4g.micro"
 }
