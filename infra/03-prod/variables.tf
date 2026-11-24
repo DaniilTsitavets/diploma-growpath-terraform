@@ -42,3 +42,21 @@ variable "domain_name" {
   description = "Public domain of the platform."
   type        = string
 }
+
+variable "enable_api_routes" {
+  description = "Create the API Gateway routes once the internal ALB exists (second phase of the ingress deployment)."
+  type        = bool
+  default     = false
+}
+
+variable "api_throttling_rate_limit" {
+  description = "Steady request rate per second allowed on every route."
+  type        = number
+  default     = 20
+}
+
+variable "api_throttling_burst_limit" {
+  description = "Burst of requests allowed on every route."
+  type        = number
+  default     = 40
+}
