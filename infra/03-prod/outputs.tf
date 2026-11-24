@@ -56,3 +56,23 @@ output "backend_ci_role_arn" {
   description = "Role the backend repository assumes to push images."
   value       = module.backend_ci_role.arn
 }
+
+output "eks_cluster_name" {
+  description = "Name of the EKS cluster."
+  value       = module.eks.cluster_name
+}
+
+output "eks_cluster_endpoint" {
+  description = "Private API server endpoint of the EKS cluster."
+  value       = module.eks.cluster_endpoint
+}
+
+output "karpenter_queue_name" {
+  description = "SQS queue Karpenter reads interruption events from."
+  value       = module.karpenter.queue_name
+}
+
+output "karpenter_node_role_name" {
+  description = "IAM role of the nodes Karpenter launches."
+  value       = module.karpenter.node_iam_role_name
+}
