@@ -1,0 +1,31 @@
+name: 03-prod
+
+on:
+  pull_request:
+    paths:
+      - infra/03-prod/**
+      - .github/workflows/03-prod.yml
+      - .github/workflows/terraform.yml
+      - .github/scripts/prepare.sh
+  push:
+    branches: [main]
+    paths:
+      - infra/03-prod/**
+      - .github/workflows/03-prod.yml
+      - .github/workflows/terraform.yml
+      - .github/scripts/prepare.sh
+
+permissions:
+  contents: read
+
+jobs:
+  terraform:
+    uses: ./.github/workflows/terraform.yml
+    with:
+      layer: 03-prod
+      secret_prefix: TF_PROD
+      environment: prod
+    secrets: inherit
+    permissions:
+      id-token: write
+      contents: read

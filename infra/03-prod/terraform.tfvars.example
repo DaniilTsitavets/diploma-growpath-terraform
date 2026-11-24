@@ -1,0 +1,2 @@
+state_bucket     = "growpath-tfstate-<management-account-id>"
+network_role_arn = "arn:aws:iam::<network-account-id>:role/VpcPeeringManager"

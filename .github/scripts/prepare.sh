@@ -28,6 +28,11 @@ case "$layer" in
     jq -n --arg domain "$DOMAIN_NAME" --arg bucket "$STATE_BUCKET" \
       '{domain_name: $domain, state_bucket: $bucket}' > "${dir}/terraform.tfvars.json"
     ;;
+  03-prod)
+    echo "$NETWORK_ROLE_ARN" | mask
+    jq -n --arg bucket "$STATE_BUCKET" --arg role "$NETWORK_ROLE_ARN" \
+      '{state_bucket: $bucket, network_role_arn: $role}' > "${dir}/terraform.tfvars.json"
+    ;;
   *)
     echo "unknown layer: ${layer}" >&2
     exit 1
