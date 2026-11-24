@@ -25,7 +25,7 @@ while true; do
   key=$(aws ssm get-parameter --region ${region} --name ${auth_key_parameter} --with-decryption --query Parameter.Value --output text 2>/dev/null || true)
 
   if [ -n "$key" ] && [ "$key" != "CHANGE_ME" ]; then
-    tailscale up --authkey "$key" --advertise-routes ${vpc_cidr} --advertise-tags tag:aws-router --accept-dns=false --hostname aws-router && exit 0
+    tailscale up --authkey "$key" --advertise-routes ${advertise_routes} --advertise-tags tag:aws-router --accept-dns=false --hostname aws-router && exit 0
   fi
 
   sleep 30

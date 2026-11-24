@@ -29,8 +29,8 @@ module "tailscale_router" {
   instance_type     = var.tailscale_instance_type
   ami_ssm_parameter = "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-arm64"
 
-  subnet_id                   = module.vpc.private_subnets[0]
-  associate_public_ip_address = false
+  subnet_id                   = module.vpc.public_subnets[0]
+  associate_public_ip_address = true
   source_dest_check           = false
 
   create_security_group = true
@@ -56,7 +56,7 @@ module "tailscale_router" {
 
   user_data = templatefile("${path.module}/tailscale-user-data.sh.tftpl", {
     auth_key_parameter = aws_ssm_parameter.tailscale_auth_key.name
-    vpc_cidr           = var.vpc_cidr
+    advertise_routes   = join(",", var.advertise_routes)
     region             = var.region
   })
   user_data_replace_on_change = true
