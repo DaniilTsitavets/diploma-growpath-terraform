@@ -1,0 +1,31 @@
+name: 02-network
+
+on:
+  pull_request:
+    paths:
+      - infra/02-network/**
+      - .github/workflows/02-network.yml
+      - .github/workflows/terraform.yml
+      - .github/scripts/prepare.sh
+  push:
+    branches: [main]
+    paths:
+      - infra/02-network/**
+      - .github/workflows/02-network.yml
+      - .github/workflows/terraform.yml
+      - .github/scripts/prepare.sh
+
+permissions:
+  contents: read
+
+jobs:
+  terraform:
+    uses: ./.github/workflows/terraform.yml
+    with:
+      layer: 02-network
+      secret_prefix: TF_NETWORK
+      environment: network
+    secrets: inherit
+    permissions:
+      id-token: write
+      contents: read

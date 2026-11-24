@@ -1,0 +1,52 @@
+#!/bin/bash
+set -euo pipefail
+
+dnf install -y dnf-plugins-core
+dnf config-manager --add-repo https://pkgs.tailscale.com/stable/amazon-linux/2023/tailscale.repo
+dnf install -y tailscale
+
+cat > /etc/sysctl.d/99-tailscale.conf <<'SYSCTL'
+net.ipv4.ip_forward = 1
+net.ipv6.conf.all.forwarding = 1
+SYSCTL
+sysctl -p /etc/sysctl.d/99-tailscale.conf
+
+systemctl enable --now tailscaled
+
+cat > /usr/local/bin/tailscale-join.sh <<'JOIN'
+#!/bin/bash
+set -uo pipefail
+
+while true; do
+  if tailscale ip -4 >/dev/null 2>&1; then
+    exit 0
+  fi
+
+  key=$(aws ssm get-parameter --region ${region} --name ${auth_key_parameter} --with-decryption --query Parameter.Value --output text 2>/dev/null || true)
+
+  if [ -n "$key" ] && [ "$key" != "CHANGE_ME" ]; then
+    tailscale up --authkey "$key" --advertise-routes ${advertise_routes} --advertise-tags tag:aws-router --accept-dns=false --hostname aws-router && exit 0
+  fi
+
+  sleep 30
+done
+JOIN
+chmod +x /usr/local/bin/tailscale-join.sh
+
+cat > /etc/systemd/system/tailscale-join.service <<'UNIT'
+[Unit]
+Description=Join the tailnet once the auth key is available
+After=tailscaled.service network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart=/usr/local/bin/tailscale-join.sh
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
+UNIT
+
+systemctl daemon-reload
+systemctl enable --now tailscale-join.service
