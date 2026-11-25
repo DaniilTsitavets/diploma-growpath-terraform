@@ -50,9 +50,10 @@ locals {
     "integration.request.header.X-Correlation-Id" = "context.requestId"
   }
 
+  # The bracket form `claims['cognito:groups']` is accepted but resolves to nothing in requestParameters; the dotted one works.
   identity_headers = merge(local.correlation_header, {
     "integration.request.header.X-User-Id"     = "context.authorizer.claims.sub"
-    "integration.request.header.X-User-Groups" = "context.authorizer.claims['cognito:groups']"
+    "integration.request.header.X-User-Groups" = "context.authorizer.claims.cognito:groups"
   })
 
   route_definitions = merge(
