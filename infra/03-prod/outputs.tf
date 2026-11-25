@@ -86,3 +86,13 @@ output "platform_certificate_arn" {
   description = "Regional ACM certificate for the platform hosts."
   value       = aws_acm_certificate_validation.platform.certificate_arn
 }
+
+output "topic_arns" {
+  description = "SNS topic ARNs by name, for the service environment variables."
+  value       = local.topic_arns
+}
+
+output "queue_urls" {
+  description = "SQS queue URLs by name, for the service environment variables."
+  value       = { for name, queue in module.queue : name => queue.queue_url }
+}
