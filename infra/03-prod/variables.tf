@@ -46,7 +46,7 @@ variable "domain_name" {
 variable "enable_api_routes" {
   description = "Create the API Gateway routes once the internal ALB exists (second phase of the ingress deployment)."
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "api_throttling_rate_limit" {
