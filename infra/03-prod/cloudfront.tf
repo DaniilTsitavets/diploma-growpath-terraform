@@ -80,7 +80,8 @@ module "cdn" {
       origin_access_control_key = "s3"
     }
     api = {
-      domain_name = replace(module.api.api_endpoint, "https://", "")
+      domain_name = "${aws_api_gateway_rest_api.this.id}.execute-api.${var.region}.amazonaws.com"
+      origin_path = "/${local.api_stage_name}"
       custom_origin_config = {
         http_port              = 80
         https_port             = 443
