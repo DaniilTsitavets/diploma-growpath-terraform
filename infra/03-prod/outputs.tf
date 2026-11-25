@@ -96,3 +96,8 @@ output "queue_urls" {
   description = "SQS queue URLs by name, for the service environment variables."
   value       = { for name, queue in module.queue : name => queue.queue_url }
 }
+
+output "rds_endpoint" {
+  description = "Address of the PostgreSQL instance."
+  value       = module.rds.db_instance_address
+}
