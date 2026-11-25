@@ -45,6 +45,7 @@ module "backend_ci_role" {
         "ecr:BatchCheckLayerAvailability",
         "ecr:BatchGetImage",
         "ecr:CompleteLayerUpload",
+        "ecr:GetDownloadUrlForLayer",
         "ecr:InitiateLayerUpload",
         "ecr:PutImage",
         "ecr:UploadLayerPart",
