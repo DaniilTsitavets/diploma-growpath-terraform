@@ -1,14 +1,16 @@
 locals {
-  photos_origin  = "https://${module.s3_photos.s3_bucket_id}.s3.${var.region}.amazonaws.com"
-  cognito_origin = "https://cognito-idp.${var.region}.amazonaws.com"
+  photos_origin = "https://${module.s3_photos.s3_bucket_id}.s3.${var.region}.amazonaws.com"
+  # The services presign path-style URLs (the bucket name in the path); the trailing slash keeps the rule to this bucket.
+  photos_path_origin = "https://s3.${var.region}.amazonaws.com/${module.s3_photos.s3_bucket_id}/"
+  cognito_origin     = "https://cognito-idp.${var.region}.amazonaws.com"
 
   content_security_policy = join("; ", [
     "default-src 'none'",
     "script-src 'self'",
     "style-src 'self'",
-    "img-src 'self' data: blob: ${local.photos_origin}",
+    "img-src 'self' data: blob: ${local.photos_origin} ${local.photos_path_origin}",
     "font-src 'self'",
-    "connect-src 'self' ${local.cognito_origin} ${local.photos_origin}",
+    "connect-src 'self' ${local.cognito_origin} ${local.photos_origin} ${local.photos_path_origin}",
     "manifest-src 'self'",
     "object-src 'none'",
     "base-uri 'none'",
