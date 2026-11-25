@@ -92,6 +92,7 @@ module "database_secret" {
   name                    = "${var.cluster_name}/${each.key}"
   description             = "Environment of the ${each.key} service"
   recovery_window_in_days = 0
+  ignore_secret_changes   = true
 
   secret_string = jsonencode({
     "${each.value.env_prefix}_DATABASE_URL" = format(
@@ -113,6 +114,7 @@ module "rds_bootstrap_secret" {
   name                    = "${var.cluster_name}/rds-bootstrap"
   description             = "Admin login and role passwords for the database bootstrap Job"
   recovery_window_in_days = 0
+  ignore_secret_changes   = true
 
   secret_string = jsonencode(merge(
     {
