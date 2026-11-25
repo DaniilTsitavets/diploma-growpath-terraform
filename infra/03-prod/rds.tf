@@ -10,13 +10,14 @@ locals {
   rds_master_username = "growpath_admin"
 }
 
-# No special characters: the passwords go into URLs unescaped.
-resource "random_password" "rds_master" {
+# Ephemeral and write-only end to end: the passwords never reach the state or the plan, and are
+# changed by hand after creation. No special characters, the passwords go into URLs unescaped.
+ephemeral "random_password" "rds_master" {
   length  = 32
   special = false
 }
 
-resource "random_password" "database" {
+ephemeral "random_password" "database" {
   for_each = local.databases
 
   length  = 32
@@ -64,7 +65,7 @@ module "rds" {
   storage_type          = "gp3"
 
   username                    = local.rds_master_username
-  password_wo                 = random_password.rds_master.result
+  password_wo                 = ephemeral.random_password.rds_master.result
   password_wo_version         = 1
   manage_master_user_password = false
 
@@ -92,13 +93,13 @@ module "database_secret" {
   name                    = "${var.cluster_name}/${each.key}"
   description             = "Environment of the ${each.key} service"
   recovery_window_in_days = 0
-  ignore_secret_changes   = true
 
-  secret_string = jsonencode({
+  secret_string_wo_version = 1
+  secret_string_wo = jsonencode({
     "${each.value.env_prefix}_DATABASE_URL" = format(
       "postgresql+psycopg://%s:%s@%s:%d/%s?sslmode=require",
       each.value.name,
-      random_password.database[each.key].result,
+      ephemeral.random_password.database[each.key].result,
       module.rds.db_instance_address,
       module.rds.db_instance_port,
       each.value.name,
@@ -114,16 +115,16 @@ module "rds_bootstrap_secret" {
   name                    = "${var.cluster_name}/rds-bootstrap"
   description             = "Admin login and role passwords for the database bootstrap Job"
   recovery_window_in_days = 0
-  ignore_secret_changes   = true
 
-  secret_string = jsonencode(merge(
+  secret_string_wo_version = 1
+  secret_string_wo = jsonencode(merge(
     {
       PGHOST     = module.rds.db_instance_address
       PGPORT     = tostring(module.rds.db_instance_port)
       PGUSER     = local.rds_master_username
-      PGPASSWORD = random_password.rds_master.result
+      PGPASSWORD = ephemeral.random_password.rds_master.result
       PGDATABASE = "postgres"
     },
-    { for key, db in local.databases : "${db.env_prefix}_PASSWORD" => random_password.database[key].result },
+    { for key, db in local.databases : "${db.env_prefix}_PASSWORD" => ephemeral.random_password.database[key].result },
   ))
 }
