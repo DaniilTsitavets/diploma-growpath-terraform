@@ -1,11 +1,11 @@
 output "api_id" {
-  description = "ID of the HTTP API."
-  value       = module.api.api_id
+  description = "ID of the REST API."
+  value       = aws_api_gateway_rest_api.this.id
 }
 
 output "api_endpoint" {
-  description = "Default execute-api endpoint that CloudFront uses as the API origin."
-  value       = module.api.api_endpoint
+  description = "Invoke URL of the API stage that CloudFront uses as the API origin."
+  value       = aws_api_gateway_stage.this.invoke_url
 }
 
 output "alb_security_group_id" {
