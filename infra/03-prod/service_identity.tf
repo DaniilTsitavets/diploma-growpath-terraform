@@ -5,6 +5,12 @@ locals {
 
   consume_actions = ["sqs:ReceiveMessage", "sqs:DeleteMessage", "sqs:GetQueueAttributes"]
 
+  # The EU geo inference profile fans a request out to these regions, so the model has to be allowed in each of them.
+  bedrock_model_id    = "anthropic.claude-haiku-5-5"
+  bedrock_regions     = ["eu-north-1", "eu-west-1", "eu-west-3", "eu-central-1", "eu-south-1", "eu-south-2"]
+  bedrock_profile_arn = "arn:aws:bedrock:${var.region}:${data.aws_caller_identity.current.account_id}:inference-profile/eu.${local.bedrock_model_id}"
+  bedrock_actions     = ["bedrock:InvokeModel", "bedrock:InvokeModelWithResponseStream"]
+
   service_statements = {
     commerce = [{
       sid       = "PublishOrderPlaced"
@@ -33,6 +39,21 @@ locals {
         sid       = "Photos"
         actions   = ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"]
         resources = ["${module.s3_photos.s3_bucket_arn}/journals/*"]
+      },
+      {
+        sid       = "InvokeModelProfile"
+        actions   = local.bedrock_actions
+        resources = [local.bedrock_profile_arn]
+      },
+      {
+        sid       = "InvokeModelBehindProfile"
+        actions   = local.bedrock_actions
+        resources = [for region in local.bedrock_regions : "arn:aws:bedrock:${region}::foundation-model/${local.bedrock_model_id}"]
+        condition = [{
+          test     = "StringEquals"
+          variable = "bedrock:InferenceProfileArn"
+          values   = [local.bedrock_profile_arn]
+        }]
       },
     ]
 
