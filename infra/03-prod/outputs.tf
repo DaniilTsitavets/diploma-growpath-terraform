@@ -59,22 +59,22 @@ output "backend_ci_role_arn" {
 
 output "eks_cluster_name" {
   description = "Name of the EKS cluster."
-  value       = module.eks.cluster_name
+  value       = one(module.eks[*].cluster_name)
 }
 
 output "eks_cluster_endpoint" {
   description = "Private API server endpoint of the EKS cluster."
-  value       = module.eks.cluster_endpoint
+  value       = one(module.eks[*].cluster_endpoint)
 }
 
 output "karpenter_queue_name" {
   description = "SQS queue Karpenter reads interruption events from."
-  value       = module.karpenter.queue_name
+  value       = one(module.karpenter[*].queue_name)
 }
 
 output "karpenter_node_role_name" {
   description = "IAM role of the nodes Karpenter launches."
-  value       = module.karpenter.node_iam_role_name
+  value       = one(module.karpenter[*].node_iam_role_name)
 }
 
 output "platform_alb_security_group_id" {
@@ -99,5 +99,5 @@ output "queue_urls" {
 
 output "rds_endpoint" {
   description = "Address of the PostgreSQL instance."
-  value       = module.rds.db_instance_address
+  value       = one(module.rds[*].db_instance_address)
 }
