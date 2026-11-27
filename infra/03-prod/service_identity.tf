@@ -106,11 +106,9 @@ module "service_pod_identity" {
   attach_custom_policy = true
   policy_statements    = each.value
 
-  associations = {
-    this = {
-      cluster_name    = module.eks.cluster_name
-      namespace       = local.service_namespace
-      service_account = each.key
-    }
-  }
+  associations = { for cluster in module.eks[*].cluster_name : "this" => {
+    cluster_name    = cluster
+    namespace       = local.service_namespace
+    service_account = each.key
+  } }
 }

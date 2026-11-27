@@ -26,6 +26,18 @@ variable "cluster_name" {
   default     = "growpath"
 }
 
+variable "enable_platform" {
+  description = "Run the billed-by-the-hour part: EKS with its nodes, Karpenter, the NAT gateway and the database."
+  type        = bool
+  default     = false
+}
+
+variable "database_generation" {
+  description = "Increase when the database is created again: only a new value writes the new passwords and address to the secrets."
+  type        = number
+  default     = 1
+}
+
 variable "enable_nat_gateway" {
   description = "Create the NAT gateway; turn it off to stop paying for it while the cluster is down."
   type        = bool

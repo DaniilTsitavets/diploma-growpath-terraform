@@ -1,7 +1,7 @@
 # The REST API is used instead of the HTTP API because only it can map the colon claim `cognito:groups`
 # to a header. terraform-aws-modules has no REST API module (apigateway-v2 covers HTTP and WebSocket).
 data "aws_lb" "ingress" {
-  count = var.enable_api_routes ? 1 : 0
+  count = local.routes_enabled ? 1 : 0
 
   tags = {
     "ingress-name" = "growpath"
@@ -22,8 +22,11 @@ moved {
 locals {
   api_stage_name = "prod"
 
-  alb_arn = var.enable_api_routes ? data.aws_lb.ingress[0].arn : ""
-  alb_dns = var.enable_api_routes ? data.aws_lb.ingress[0].dns_name : ""
+  # The ALB is created from the cluster, so there is none to route to without the platform.
+  routes_enabled = var.enable_api_routes && var.enable_platform
+
+  alb_arn = local.routes_enabled ? data.aws_lb.ingress[0].arn : ""
+  alb_dns = local.routes_enabled ? data.aws_lb.ingress[0].dns_name : ""
 
   # Without a signed-in user the identity headers are not mapped, so a client-sent X-User-Id passes through.
   public_routes = {
@@ -128,7 +131,7 @@ locals {
     }
   }
 
-  openapi_body = var.enable_api_routes ? jsonencode(merge(local.openapi_base, { paths = local.operations })) : jsonencode(merge(local.openapi_base, { paths = local.mock_paths }))
+  openapi_body = local.routes_enabled ? jsonencode(merge(local.openapi_base, { paths = local.operations })) : jsonencode(merge(local.openapi_base, { paths = local.mock_paths }))
 }
 
 resource "aws_api_gateway_rest_api" "this" {

@@ -8,6 +8,10 @@ locals {
   }
 
   rds_master_username = "growpath_admin"
+
+  # The secrets outlive the instance, so they need values while it does not exist.
+  rds_address = try(module.rds[0].db_instance_address, "")
+  rds_port    = try(module.rds[0].db_instance_port, 5432)
 }
 
 # Ephemeral and write-only end to end: the passwords never reach the state or the plan, and are
@@ -32,25 +36,29 @@ module "rds_sg" {
   description = "PostgreSQL for the services"
   vpc_id      = module.vpc.vpc_id
 
-  ingress_rules = {
-    from_nodes = {
+  ingress_rules = merge(
+    { for id in module.eks[*].node_security_group_id : "from_nodes" => {
       description                  = "PostgreSQL from the pods"
-      referenced_security_group_id = module.eks.node_security_group_id
+      referenced_security_group_id = id
       from_port                    = 5432
       to_port                      = 5432
-    }
-    from_tailscale_router = {
-      description = "PostgreSQL from the Tailscale router"
-      cidr_ipv4   = local.network_vpc_cidr
-      from_port   = 5432
-      to_port     = 5432
-    }
-  }
+    } },
+    {
+      from_tailscale_router = {
+        description = "PostgreSQL from the Tailscale router"
+        cidr_ipv4   = local.network_vpc_cidr
+        from_port   = 5432
+        to_port     = 5432
+      }
+    },
+  )
 }
 
 module "rds" {
   source  = "terraform-aws-modules/rds/aws"
   version = "~> 7.2"
+
+  count = var.enable_platform ? 1 : 0
 
   identifier = var.cluster_name
 
@@ -66,7 +74,7 @@ module "rds" {
 
   username                    = local.rds_master_username
   password_wo                 = ephemeral.random_password.rds_master.result
-  password_wo_version         = 1
+  password_wo_version         = var.database_generation
   manage_master_user_password = false
 
   create_db_subnet_group = true
@@ -94,14 +102,14 @@ module "database_secret" {
   description             = "Environment of the ${each.key} service"
   recovery_window_in_days = 0
 
-  secret_string_wo_version = 1
+  secret_string_wo_version = var.database_generation
   secret_string_wo = jsonencode({
     "${each.value.env_prefix}_DATABASE_URL" = format(
       "postgresql+psycopg://%s:%s@%s:%d/%s?sslmode=require",
       each.value.name,
       ephemeral.random_password.database[each.key].result,
-      module.rds.db_instance_address,
-      module.rds.db_instance_port,
+      local.rds_address,
+      local.rds_port,
       each.value.name,
     )
   })
@@ -116,15 +124,20 @@ module "rds_bootstrap_secret" {
   description             = "Admin login and role passwords for the database bootstrap Job"
   recovery_window_in_days = 0
 
-  secret_string_wo_version = 1
+  secret_string_wo_version = var.database_generation
   secret_string_wo = jsonencode(merge(
     {
-      PGHOST     = module.rds.db_instance_address
-      PGPORT     = tostring(module.rds.db_instance_port)
+      PGHOST     = local.rds_address
+      PGPORT     = tostring(local.rds_port)
       PGUSER     = local.rds_master_username
       PGPASSWORD = ephemeral.random_password.rds_master.result
       PGDATABASE = "postgres"
     },
     { for key, db in local.databases : "${db.env_prefix}_PASSWORD" => ephemeral.random_password.database[key].result },
   ))
+}
+
+moved {
+  from = module.rds
+  to   = module.rds[0]
 }

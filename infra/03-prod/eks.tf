@@ -7,6 +7,8 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 21.30"
 
+  count = var.enable_platform ? 1 : 0
+
   name               = var.cluster_name
   kubernetes_version = var.kubernetes_version
 
@@ -140,4 +142,9 @@ module "eks" {
       }]
     }
   }
+}
+
+moved {
+  from = module.eks
+  to   = module.eks[0]
 }
